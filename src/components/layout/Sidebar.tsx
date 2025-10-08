@@ -13,17 +13,40 @@ import {
   FileText,
   ChevronLeft,
   ChevronRight,
-  Shield
+  Shield,
+  LogOut,
+  User
 } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
+import { Separator } from '../ui/separator';
+import { 
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '../ui/dropdown-menu';
+
+interface User {
+  uid: string;
+  email: string;
+  displayName: string;
+  role: string;
+  department: string;
+  lastLogin: string;
+}
 
 interface SidebarProps {
   currentPage: string;
   onPageChange: (page: string) => void;
+  user: User;
+  onLogout: () => void;
 }
 
-export function Sidebar({ currentPage, onPageChange }: SidebarProps) {
+export function Sidebar({ currentPage, onPageChange, user, onLogout }: SidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const menuItems = [
@@ -77,15 +100,109 @@ export function Sidebar({ currentPage, onPageChange }: SidebarProps) {
       {/* User Info */}
       {!isCollapsed && (
         <div className="p-4 border-b border-primary-foreground/20">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 bg-accent rounded-full flex items-center justify-center">
-              <span className="text-sm">A</span>
-            </div>
-            <div>
-              <p className="text-sm">admin</p>
-              <p className="text-xs text-primary-foreground/70">en línea</p>
-            </div>
-          </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                variant="ghost" 
+                className="w-full justify-start gap-3 text-left h-auto p-2 hover:bg-primary-foreground/20"
+              >
+                <Avatar className="w-8 h-8">
+                  <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${user.displayName}`} />
+                  <AvatarFallback className="bg-secondary text-white text-xs">
+                    {user.displayName.split(' ').map(n => n[0]).join('').toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm text-primary-foreground truncate">{user.displayName}</p>
+                  <p className="text-xs text-primary-foreground/70 truncate">{user.department}</p>
+                </div>
+              </Button>
+            </DropdownMenuTrigger>
+            
+            <DropdownMenuContent align="start" className="w-56">
+              <DropdownMenuLabel className="font-normal">
+                <div className="flex flex-col space-y-1">
+                  <p className="text-sm leading-none">{user.displayName}</p>
+                  <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                </div>
+              </DropdownMenuLabel>
+              
+              <DropdownMenuSeparator />
+              
+              <DropdownMenuItem onClick={() => onPageChange('account')}>
+                <User className="mr-2 h-4 w-4" />
+                <span>Mi Perfil</span>
+              </DropdownMenuItem>
+              
+              <DropdownMenuItem onClick={() => onPageChange('settings')}>
+                <Settings className="mr-2 h-4 w-4" />
+                <span>Configuración</span>
+              </DropdownMenuItem>
+              
+              <DropdownMenuSeparator />
+              
+              <DropdownMenuItem 
+                onClick={onLogout}
+                className="text-destructive focus:text-destructive"
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Cerrar Sesión</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      )}
+      
+      {/* Collapsed User Avatar */}
+      {isCollapsed && (
+        <div className="p-2 border-b border-primary-foreground/20 flex justify-center">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button 
+                variant="ghost" 
+                size="sm"
+                className="p-1.5 hover:bg-primary-foreground/20"
+              >
+                <Avatar className="w-6 h-6">
+                  <AvatarImage src={`https://api.dicebear.com/7.x/initials/svg?seed=${user.displayName}`} />
+                  <AvatarFallback className="bg-secondary text-white text-xs">
+                    {user.displayName.split(' ').map(n => n[0]).join('').toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+              </Button>
+            </DropdownMenuTrigger>
+            
+            <DropdownMenuContent align="start" side="right" className="w-56">
+              <DropdownMenuLabel className="font-normal">
+                <div className="flex flex-col space-y-1">
+                  <p className="text-sm leading-none">{user.displayName}</p>
+                  <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                </div>
+              </DropdownMenuLabel>
+              
+              <DropdownMenuSeparator />
+              
+              <DropdownMenuItem onClick={() => onPageChange('account')}>
+                <User className="mr-2 h-4 w-4" />
+                <span>Mi Perfil</span>
+              </DropdownMenuItem>
+              
+              <DropdownMenuItem onClick={() => onPageChange('settings')}>
+                <Settings className="mr-2 h-4 w-4" />
+                <span>Configuración</span>
+              </DropdownMenuItem>
+              
+              <DropdownMenuSeparator />
+              
+              <DropdownMenuItem 
+                onClick={onLogout}
+                className="text-destructive focus:text-destructive"
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Cerrar Sesión</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       )}
 
