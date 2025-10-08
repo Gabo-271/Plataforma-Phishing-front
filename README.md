@@ -1,9 +1,8 @@
 
-  # titulo
+  # como ejecutar el proyecto
 
-  This is a code bundle for titulo. The original project is available at https://www.figma.com/design/0D5aLkMPbty2DTuPDoP2RR/titulo.
 
-  ## Running the code
+  ## en la consola y en la ruta del proyecto usar estos comandos 
 
   Run `npm i` to install the dependencies.
 
