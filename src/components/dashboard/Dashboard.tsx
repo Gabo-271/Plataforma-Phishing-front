@@ -72,16 +72,16 @@ export function Dashboard() {
   };
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="p-4 sm:p-6 space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex flex-col gap-4 sm:flex-row sm:justify-between sm:items-center">
         <div>
-          <h1>Dashboard</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-xl sm:text-2xl">Dashboard</h1>
+          <p className="text-muted-foreground text-sm sm:text-base">
             Resumen de actividad y métricas de campañas de phishing educativo
           </p>
         </div>
-        <Button className="gap-2">
+        <Button className="gap-2 w-full sm:w-auto">
           <Plus className="w-4 h-4" />
           Nueva Campaña
         </Button>
@@ -172,10 +172,10 @@ export function Dashboard() {
         <CardContent>
           <div className="space-y-4">
             {campaigns.map((campaign) => (
-              <div key={campaign.id} className="flex items-center justify-between p-4 border rounded-lg">
+              <div key={campaign.id} className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 border rounded-lg space-y-3 sm:space-y-0">
                 <div className="flex-1">
-                  <div className="flex items-center gap-3">
-                    <h4 className="font-medium">{campaign.name}</h4>
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3">
+                    <h4 className="font-medium text-sm sm:text-base">{campaign.name}</h4>
                     <Badge variant={
                       campaign.status === 'activa' ? 'default' :
                       campaign.status === 'completada' ? 'secondary' :
@@ -184,25 +184,27 @@ export function Dashboard() {
                       {campaign.status}
                     </Badge>
                   </div>
-                  <p className="text-sm text-muted-foreground mt-1">
+                  <p className="text-xs sm:text-sm text-muted-foreground mt-1">
                     {campaign.targets} objetivos • Creada el {new Date(campaign.created).toLocaleDateString('es-CL')}
                   </p>
                 </div>
                 
-                <div className="flex items-center gap-6 text-sm">
-                  <div className="text-center">
-                    <div className="font-medium">{campaign.opened}</div>
-                    <div className="text-muted-foreground">Aperturas</div>
+                <div className="flex items-center justify-between sm:gap-6 text-sm">
+                  <div className="flex gap-4 sm:gap-6">
+                    <div className="text-center">
+                      <div className="font-medium">{campaign.opened}</div>
+                      <div className="text-muted-foreground text-xs">Aperturas</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="font-medium">{campaign.clicked}</div>
+                      <div className="text-muted-foreground text-xs">Clics</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="font-medium">{campaign.reported}</div>
+                      <div className="text-muted-foreground text-xs">Reportes</div>
+                    </div>
                   </div>
-                  <div className="text-center">
-                    <div className="font-medium">{campaign.clicked}</div>
-                    <div className="text-muted-foreground">Clics</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="font-medium">{campaign.reported}</div>
-                    <div className="text-muted-foreground">Reportes</div>
-                  </div>
-                  <Button variant="outline" size="sm">
+                  <Button variant="outline" size="sm" className="ml-2 sm:ml-0">
                     Ver Detalles
                   </Button>
                 </div>

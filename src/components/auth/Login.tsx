@@ -218,29 +218,29 @@ export function Login({ onLogin, onError }: LoginProps) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary/5 via-background to-secondary/5 flex items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-6">
+      <div className="w-full max-w-md space-y-4 sm:space-y-6">
         {/* Header con branding UTEM */}
-        <div className="text-center space-y-4">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-primary rounded-2xl">
-            <Shield className="w-8 h-8 text-primary-foreground" />
+        <div className="text-center space-y-3 sm:space-y-4">
+          <div className="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-primary rounded-2xl">
+            <Shield className="w-6 h-6 sm:w-8 sm:h-8 text-primary-foreground" />
           </div>
-          <div className="space-y-2">
-            <h1 className="text-3xl tracking-tight">UTEM Ciberseguridad</h1>
-            <p className="text-muted-foreground">
+          <div className="space-y-1 sm:space-y-2">
+            <h1 className="text-2xl sm:text-3xl tracking-tight">UTEM Ciberseguridad</h1>
+            <p className="text-sm sm:text-base text-muted-foreground px-2">
               Plataforma de Educación en Ciberseguridad
             </p>
           </div>
         </div>
 
-        <Card className="border-border/50 shadow-lg">
-          <CardHeader className="space-y-1 pb-4">
-            <CardTitle className="text-center">Iniciar Sesión</CardTitle>
-            <CardDescription className="text-center">
+        <Card className="border-border/50 shadow-lg mx-2 sm:mx-0">
+          <CardHeader className="space-y-1 pb-4 px-4 sm:px-6">
+            <CardTitle className="text-center text-lg sm:text-xl">Iniciar Sesión</CardTitle>
+            <CardDescription className="text-center text-sm sm:text-base">
               Ingresa con tu cuenta institucional UTEM
             </CardDescription>
           </CardHeader>
           
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-4 px-4 sm:px-6">
             {error && (
               <Alert variant="destructive" className="animate-in slide-in-from-top-1">
                 <AlertCircle className="h-4 w-4" />
@@ -261,7 +261,7 @@ export function Login({ onLogin, onError }: LoginProps) {
             <Button
               type="button"
               variant="outline"
-              className="w-full h-11 bg-white hover:bg-gray-50 text-gray-900 border-gray-300"
+              className="w-full h-11 sm:h-12 bg-white hover:bg-gray-50 text-gray-900 border-gray-300 text-sm sm:text-base"
               onClick={handleGoogleLogin}
               disabled={isGoogleLoading || isLoading}
             >
@@ -373,7 +373,7 @@ export function Login({ onLogin, onError }: LoginProps) {
 
               <Button
                 type="submit"
-                className="w-full h-11"
+                className="w-full h-11 sm:h-12 text-sm sm:text-base"
                 disabled={isLoading || isGoogleLoading || !formData.email || !formData.password}
               >
                 {isLoading ? (
@@ -403,7 +403,7 @@ export function Login({ onLogin, onError }: LoginProps) {
         </Card>
 
         {/* Footer con información institucional */}
-        <div className="text-center text-xs text-muted-foreground space-y-1">
+        <div className="text-center text-xs text-muted-foreground space-y-1 px-4">
           <p>Universidad Tecnológica Metropolitana</p>
           <p>Dirección de Tecnologías de la Información</p>
           <p className="mt-2">

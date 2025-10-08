@@ -7,6 +7,10 @@ import { TemplateEditor } from './components/templates/TemplateEditor';
 import { Settings } from './components/settings/Settings';
 import { LandingPage } from './components/landing/LandingPage';
 import { Login } from './components/auth/Login';
+import { useIsMobile } from './components/ui/use-mobile';
+import { Button } from './components/ui/button';
+import { Sheet, SheetContent, SheetTrigger } from './components/ui/sheet';
+import { Menu, Shield } from 'lucide-react';
 
 /**
  * Aplicación principal con sistema de autenticación Firebase
@@ -43,6 +47,8 @@ export default function App() {
   const [isCreatingCampaign, setIsCreatingCampaign] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const isMobile = useIsMobile();
 
   // Simulación de verificación de autenticación al cargar la app
   useEffect(() => {
@@ -105,6 +111,14 @@ export default function App() {
     setUser(null);
     localStorage.removeItem('utem-user');
     setCurrentPage('dashboard');
+    setMobileMenuOpen(false); // Cerrar menú móvil al logout
+  };
+
+  const handlePageChange = (page: string) => {
+    setCurrentPage(page);
+    if (isMobile) {
+      setMobileMenuOpen(false); // Cerrar menú móvil al navegar
+    }
   };
 
   // Simulación de diferentes vistas basadas en URL params
@@ -144,9 +158,9 @@ export default function App() {
         return <CampaignList />;
       case 'detection':
         return (
-          <div className="p-6">
-            <h1>Módulo de Detección</h1>
-            <p className="text-muted-foreground mt-2">
+          <div className="p-4 sm:p-6">
+            <h1 className="text-xl sm:text-2xl">Módulo de Detección</h1>
+            <p className="text-muted-foreground mt-2 text-sm sm:text-base">
               Sistema avanzado de detección y análisis de amenazas en desarrollo...
             </p>
             <div className="mt-8 p-4 bg-muted rounded-lg">
@@ -181,9 +195,9 @@ export default function App() {
         return <Settings />;
       case 'users':
         return (
-          <div className="p-6">
-            <h1>Usuarios y Grupos</h1>
-            <p className="text-muted-foreground mt-2">
+          <div className="p-4 sm:p-6">
+            <h1 className="text-xl sm:text-2xl">Usuarios y Grupos</h1>
+            <p className="text-muted-foreground mt-2 text-sm sm:text-base">
               Módulo de gestión de usuarios en desarrollo...
             </p>
             <div className="mt-8 p-4 bg-muted rounded-lg">
@@ -199,9 +213,9 @@ export default function App() {
         );
       case 'landing':
         return (
-          <div className="p-6">
-            <h1>Páginas de Destino</h1>
-            <p className="text-muted-foreground mt-2">
+          <div className="p-4 sm:p-6">
+            <h1 className="text-xl sm:text-2xl">Páginas de Destino</h1>
+            <p className="text-muted-foreground mt-2 text-sm sm:text-base">
               Editor de landing pages educativas en desarrollo...
             </p>
             <div className="mt-8 p-4 bg-muted rounded-lg">
@@ -217,9 +231,9 @@ export default function App() {
         );
       case 'sending':
         return (
-          <div className="p-6">
-            <h1>Perfiles de Envío</h1>
-            <p className="text-muted-foreground mt-2">
+          <div className="p-4 sm:p-6">
+            <h1 className="text-xl sm:text-2xl">Perfiles de Envío</h1>
+            <p className="text-muted-foreground mt-2 text-sm sm:text-base">
               Gestión avanzada de perfiles SMTP en desarrollo...
             </p>
             <div className="mt-8 p-4 bg-muted rounded-lg">
@@ -235,9 +249,9 @@ export default function App() {
         );
       case 'management':
         return (
-          <div className="p-6">
-            <h1>Gestión de Usuarios</h1>
-            <p className="text-muted-foreground mt-2">
+          <div className="p-4 sm:p-6">
+            <h1 className="text-xl sm:text-2xl">Gestión de Usuarios</h1>
+            <p className="text-muted-foreground mt-2 text-sm sm:text-base">
               Panel administrativo en desarrollo...
             </p>
             <div className="mt-8 p-4 bg-muted rounded-lg">
@@ -253,9 +267,9 @@ export default function App() {
         );
       case 'webhooks':
         return (
-          <div className="p-6">
-            <h1>Webhooks</h1>
-            <p className="text-muted-foreground mt-2">
+          <div className="p-4 sm:p-6">
+            <h1 className="text-xl sm:text-2xl">Webhooks</h1>
+            <p className="text-muted-foreground mt-2 text-sm sm:text-base">
               Configuración de webhooks y integraciones en desarrollo...
             </p>
             <div className="mt-8 p-4 bg-muted rounded-lg">
@@ -271,18 +285,18 @@ export default function App() {
         );
       case 'guide':
         return (
-          <div className="p-6">
-            <h1>Guía de Usuario</h1>
-            <p className="text-muted-foreground mt-2">
+          <div className="p-4 sm:p-6">
+            <h1 className="text-xl sm:text-2xl">Guía de Usuario</h1>
+            <p className="text-muted-foreground mt-2 text-sm sm:text-base">
               Documentación y tutoriales en desarrollo...
             </p>
           </div>
         );
       case 'api':
         return (
-          <div className="p-6">
-            <h1>Documentación API</h1>
-            <p className="text-muted-foreground mt-2">
+          <div className="p-4 sm:p-6">
+            <h1 className="text-xl sm:text-2xl">Documentación API</h1>
+            <p className="text-muted-foreground mt-2 text-sm sm:text-base">
               Referencia completa de la API en desarrollo...
             </p>
           </div>
@@ -292,13 +306,59 @@ export default function App() {
     }
   };
 
+  // Versión móvil con Sheet/Drawer
+  if (isMobile) {
+    return (
+      <div className="min-h-screen bg-background">
+        {/* Header móvil */}
+        <header className="bg-primary text-primary-foreground p-4 flex items-center justify-between border-b">
+          <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="sm" className="text-primary-foreground hover:bg-primary-foreground/20">
+                <Menu className="h-6 w-6" />
+                <span className="sr-only">Abrir menú</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="p-0 w-80">
+              <Sidebar 
+                currentPage={currentPage} 
+                onPageChange={handlePageChange}
+                user={user}
+                onLogout={handleLogout}
+                isMobile={true}
+              />
+            </SheetContent>
+          </Sheet>
+          
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-secondary rounded-lg flex items-center justify-center">
+              <Shield className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <span className="font-semibold text-sm">UTEM Ciberseguridad</span>
+            </div>
+          </div>
+          
+          <div className="w-10"></div> {/* Spacer para centrar el título */}
+        </header>
+
+        {/* Contenido principal móvil */}
+        <main className="overflow-auto">
+          {renderMainContent()}
+        </main>
+      </div>
+    );
+  }
+
+  // Versión desktop
   return (
     <div className="min-h-screen bg-background flex">
       <Sidebar 
         currentPage={currentPage} 
-        onPageChange={setCurrentPage}
+        onPageChange={handlePageChange}
         user={user}
         onLogout={handleLogout}
+        isMobile={false}
       />
       <main className="flex-1 overflow-auto">
         {renderMainContent()}

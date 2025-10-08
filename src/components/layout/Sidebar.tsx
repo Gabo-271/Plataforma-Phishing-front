@@ -44,9 +44,10 @@ interface SidebarProps {
   onPageChange: (page: string) => void;
   user: User;
   onLogout: () => void;
+  isMobile?: boolean;
 }
 
-export function Sidebar({ currentPage, onPageChange, user, onLogout }: SidebarProps) {
+export function Sidebar({ currentPage, onPageChange, user, onLogout, isMobile = false }: SidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const menuItems = [
@@ -72,11 +73,11 @@ export function Sidebar({ currentPage, onPageChange, user, onLogout }: SidebarPr
 
   return (
     <div className={`bg-primary text-primary-foreground transition-all duration-300 ${
-      isCollapsed ? 'w-16' : 'w-64'
-    } min-h-screen flex flex-col`}>
+      isMobile ? 'w-full' : (isCollapsed ? 'w-16' : 'w-64')
+    } ${isMobile ? 'h-full' : 'min-h-screen'} flex flex-col`}>
       {/* Header */}
       <div className="p-4 border-b border-primary-foreground/20 flex items-center justify-between">
-        {!isCollapsed && (
+        {(!isCollapsed || isMobile) && (
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 bg-secondary rounded-lg flex items-center justify-center">
               <Shield className="w-5 h-5 text-white" />
@@ -87,18 +88,20 @@ export function Sidebar({ currentPage, onPageChange, user, onLogout }: SidebarPr
             </div>
           </div>
         )}
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          className="text-primary-foreground hover:bg-primary-foreground/20 p-1.5"
-        >
-          {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
-        </Button>
+        {!isMobile && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className="text-primary-foreground hover:bg-primary-foreground/20 p-1.5"
+          >
+            {isCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+          </Button>
+        )}
       </div>
 
       {/* User Info */}
-      {!isCollapsed && (
+      {(!isCollapsed || isMobile) && (
         <div className="p-4 border-b border-primary-foreground/20">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -154,7 +157,7 @@ export function Sidebar({ currentPage, onPageChange, user, onLogout }: SidebarPr
       )}
       
       {/* Collapsed User Avatar */}
-      {isCollapsed && (
+      {isCollapsed && !isMobile && (
         <div className="p-2 border-b border-primary-foreground/20 flex justify-center">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -218,17 +221,17 @@ export function Sidebar({ currentPage, onPageChange, user, onLogout }: SidebarPr
                 currentPage === item.id 
                   ? "bg-secondary text-white" 
                   : "text-primary-foreground hover:bg-primary-foreground/20"
-              } ${isCollapsed ? 'px-2' : 'px-3'}`}
+              } ${(isCollapsed && !isMobile) ? 'px-2' : 'px-3'}`}
               onClick={() => onPageChange(item.id)}
             >
               <item.icon className="w-4 h-4 flex-shrink-0" />
-              {!isCollapsed && <span className="truncate">{item.label}</span>}
+              {(!isCollapsed || isMobile) && <span className="truncate">{item.label}</span>}
             </Button>
           ))}
         </div>
 
         {/* Admin Section */}
-        {!isCollapsed && (
+        {(!isCollapsed || isMobile) && (
           <div className="space-y-1">
             <p className="text-xs uppercase tracking-wider text-primary-foreground/70 px-3 mb-2">
               Administración
@@ -255,7 +258,7 @@ export function Sidebar({ currentPage, onPageChange, user, onLogout }: SidebarPr
         )}
 
         {/* Help Section */}
-        {!isCollapsed && (
+        {(!isCollapsed || isMobile) && (
           <div className="space-y-1">
             <p className="text-xs uppercase tracking-wider text-primary-foreground/70 px-3 mb-2">
               Ayuda
@@ -280,7 +283,7 @@ export function Sidebar({ currentPage, onPageChange, user, onLogout }: SidebarPr
       </nav>
 
       {/* Version */}
-      {!isCollapsed && (
+      {(!isCollapsed || isMobile) && (
         <div className="p-4 border-t border-primary-foreground/20 text-xs text-primary-foreground/70">
           https://127.0.0.15333/landing_pages
         </div>
