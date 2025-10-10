@@ -90,7 +90,7 @@ export function CreateCampaign() {
           <div className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="targetGroup">Grupo de Objetivos</Label>
-              <Select value={campaignData.targetGroup} onValueChange={(value) => 
+              <Select value={campaignData.targetGroup} onValueChange={(value: string) => 
                 setCampaignData({ ...campaignData, targetGroup: value })
               }>
                 <SelectTrigger>
@@ -142,7 +142,7 @@ export function CreateCampaign() {
           <div className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="template">Plantilla de Email</Label>
-              <Select value={campaignData.template} onValueChange={(value) => 
+              <Select value={campaignData.template} onValueChange={(value: string) => 
                 setCampaignData({ ...campaignData, template: value })
               }>
                 <SelectTrigger>
@@ -198,7 +198,7 @@ export function CreateCampaign() {
           <div className="space-y-6">
             <div className="space-y-2">
               <Label htmlFor="sendingProfile">Perfil de Envío</Label>
-              <Select value={campaignData.sendingProfile} onValueChange={(value) => 
+              <Select value={campaignData.sendingProfile} onValueChange={(value: string) => 
                 setCampaignData({ ...campaignData, sendingProfile: value })
               }>
                 <SelectTrigger>
@@ -214,7 +214,7 @@ export function CreateCampaign() {
 
             <div className="space-y-2">
               <Label htmlFor="launchTime">Programación de Envío</Label>
-              <Select value={campaignData.launchTime} onValueChange={(value) => 
+              <Select value={campaignData.launchTime} onValueChange={(value: string) => 
                 setCampaignData({ ...campaignData, launchTime: value })
               }>
                 <SelectTrigger>

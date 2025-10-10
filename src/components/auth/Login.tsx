@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import type React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
@@ -39,7 +40,7 @@ interface LoginProps {
 }
 
 export function Login({ onLogin, onError }: LoginProps) {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{ email: string; password: string }>({
     email: '',
     password: ''
   });
@@ -53,7 +54,7 @@ export function Login({ onLogin, onError }: LoginProps) {
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       [name]: value
     }));
@@ -67,36 +68,33 @@ export function Login({ onLogin, onError }: LoginProps) {
     setError(null);
 
     try {
-      // TODO: Implementar Firebase Authentication
-      // const { signInWithEmailAndPassword } = await import('firebase/auth');
-      // const { auth } = await import('../../../firebase/config');
-      // 
-      // const userCredential = await signInWithEmailAndPassword(
-      //   auth, 
-      //   formData.email, 
-      //   formData.password
-      // );
-      // 
-      // if (rememberMe) {
-      //   await setPersistence(auth, browserLocalPersistence);
-      // } else {
-      //   await setPersistence(auth, browserSessionPersistence);
-      // }
+      const [{
+        signInWithEmailAndPassword,
+        setPersistence,
+        browserLocalPersistence,
+        browserSessionPersistence
+      }, { auth }] = await Promise.all([
+        import('firebase/auth'),
+        import('../../firebase/config')
+      ]);
 
-      // Simulación de login exitoso para desarrollo
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      const mockUser = {
-        uid: 'demo-user-123',
-        email: formData.email,
-        displayName: 'Usuario Demo UTEM',
-        role: 'admin',
+      await setPersistence(auth, rememberMe ? browserLocalPersistence : browserSessionPersistence);
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        formData.email,
+        formData.password
+      );
+
+      const u = userCredential.user;
+      onLogin({
+        uid: u.uid,
+        email: u.email,
+        displayName: u.displayName || u.email?.split('@')[0] || 'Usuario',
+        role: 'user',
         department: 'Ciberseguridad',
         lastLogin: new Date().toISOString(),
         provider: 'email'
-      };
-
-      onLogin(mockUser);
+      });
     } catch (error: any) {
       console.error('Error en login:', error);
       
@@ -123,42 +121,31 @@ export function Login({ onLogin, onError }: LoginProps) {
     setError(null);
 
     try {
-      // TODO: Implementar Google Sign-In con Firebase
-      // const { signInWithPopup, GoogleAuthProvider } = await import('firebase/auth');
-      // const { auth } = await import('../../../firebase/config');
-      // 
-      // const provider = new GoogleAuthProvider();
-      // provider.addScope('email');
-      // provider.addScope('profile');
-      // 
-      // // Configurar parámetros adicionales para Google
-      // provider.setCustomParameters({
-      //   'hd': 'utem.cl', // Restricción a dominio UTEM (opcional)
-      //   'prompt': 'select_account'
-      // });
-      // 
-      // const result = await signInWithPopup(auth, provider);
-      // const user = result.user;
-      // 
-      // // Verificar dominio del email (opcional para mayor seguridad)
-      // if (user.email && !user.email.endsWith('@utem.cl')) {
-      //   throw new Error('UTEM_DOMAIN_REQUIRED');
-      // }
+      const [{ signInWithPopup, GoogleAuthProvider }, { auth }] = await Promise.all([
+        import('firebase/auth'),
+        import('../../firebase/config')
+      ]);
+      const provider = new GoogleAuthProvider();
+      provider.addScope('email');
+      provider.addScope('profile');
+      provider.setCustomParameters({ prompt: 'select_account' });
 
-      // Simulación para desarrollo
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      
-      const mockGoogleUser = {
-        uid: 'google-user-456',
-        email: 'usuario.demo@utem.cl',
-        displayName: 'Usuario Google UTEM',
+      const result = await signInWithPopup(auth, provider);
+      const user = result.user;
+
+      if (user.email && import.meta.env.VITE_GOOGLE_DOMAIN && !user.email.endsWith(`@${import.meta.env.VITE_GOOGLE_DOMAIN}`)) {
+        throw new Error('UTEM_DOMAIN_REQUIRED');
+      }
+
+      onLogin({
+        uid: user.uid,
+        email: user.email,
+        displayName: user.displayName || user.email?.split('@')[0] || 'Usuario',
         role: 'user',
         department: 'Ciberseguridad',
         lastLogin: new Date().toISOString(),
         provider: 'google'
-      };
-
-      onLogin(mockGoogleUser);
+      });
     } catch (error: any) {
       console.error('Error en Google Sign-In:', error);
       
@@ -191,15 +178,11 @@ export function Login({ onLogin, onError }: LoginProps) {
     setError(null);
 
     try {
-      // TODO: Implementar recuperación de contraseña
-      // const { sendPasswordResetEmail } = await import('firebase/auth');
-      // const { auth } = await import('../../../firebase/config');
-      // 
-      // await sendPasswordResetEmail(auth, formData.email);
-
-      // Simulación para desarrollo
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
+      const [{ sendPasswordResetEmail }, { auth }] = await Promise.all([
+        import('firebase/auth'),
+        import('../../firebase/config')
+      ]);
+      await sendPasswordResetEmail(auth, formData.email);
       setResetEmailSent(true);
     } catch (error: any) {
       console.error('Error al enviar email de recuperación:', error);
@@ -344,7 +327,7 @@ export function Login({ onLogin, onError }: LoginProps) {
                   <Checkbox
                     id="remember"
                     checked={rememberMe}
-                    onCheckedChange={(checked) => setRememberMe(checked as boolean)}
+                    onCheckedChange={(checked: boolean | 'indeterminate') => setRememberMe(!!checked)}
                   />
                   <Label 
                     htmlFor="remember" 

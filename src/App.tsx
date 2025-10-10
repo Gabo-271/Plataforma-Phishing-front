@@ -50,68 +50,46 @@ export default function App() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const isMobile = useIsMobile();
 
-  // Simulación de verificación de autenticación al cargar la app
+  // Verificar autenticación con Firebase al cargar la app
   useEffect(() => {
-    const checkAuthState = () => {
-      // TODO: Implementar Firebase Auth state listener
-      // import { onAuthStateChanged } from 'firebase/auth';
-      // import { auth } from './firebase/config';
-      // 
-      // const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
-      //   if (firebaseUser) {
-      //     setUser({
-      //       uid: firebaseUser.uid,
-      //       email: firebaseUser.email || '',
-      //       displayName: firebaseUser.displayName || 'Usuario UTEM',
-      //       role: 'admin', // Obtener de Firestore o custom claims
-      //       department: 'Ciberseguridad',
-      //       lastLogin: new Date().toISOString()
-      //     });
-      //   } else {
-      //     setUser(null);
-      //   }
-      //   setAuthLoading(false);
-      // });
-      // 
-      // return unsubscribe;
-
-      // Simulación para desarrollo - verificar localStorage
-      const savedUser = localStorage.getItem('utem-user');
-      if (savedUser) {
-        try {
-          setUser(JSON.parse(savedUser));
-        } catch (error) {
-          console.error('Error parsing saved user:', error);
-          localStorage.removeItem('utem-user');
+    let unsubscribe: (() => void) | undefined;
+    (async () => {
+      const [{ onAuthStateChanged }, { auth }] = await Promise.all([
+        import('firebase/auth'),
+        import('./firebase/config')
+      ]);
+      unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+        if (firebaseUser) {
+          setUser({
+            uid: firebaseUser.uid,
+            email: firebaseUser.email || '',
+            displayName: firebaseUser.displayName || 'Usuario UTEM',
+            role: 'user', // TODO: obtener de Firestore o custom claims
+            department: 'Ciberseguridad',
+            lastLogin: new Date().toISOString()
+          });
+        } else {
+          setUser(null);
         }
-      }
-      setAuthLoading(false);
-    };
-
-    checkAuthState();
+        setAuthLoading(false);
+      });
+    })();
+    return () => { if (unsubscribe) unsubscribe(); };
   }, []);
 
   const handleLogin = (userData: User) => {
+    // Después de login, el listener de Firebase actualizará el estado.
     setUser(userData);
-    // Guardar en localStorage para persistencia de desarrollo
-    localStorage.setItem('utem-user', JSON.stringify(userData));
   };
 
-  const handleLogout = () => {
-    // TODO: Implementar Firebase signOut
-    // import { signOut } from 'firebase/auth';
-    // import { auth } from './firebase/config';
-    // 
-    // signOut(auth).then(() => {
-    //   setUser(null);
-    //   localStorage.removeItem('utem-user');
-    // });
-
-    // Simulación para desarrollo
-    setUser(null);
-    localStorage.removeItem('utem-user');
+  const handleLogout = async () => {
+    const [{ signOut }, { auth }] = await Promise.all([
+      import('firebase/auth'),
+      import('./firebase/config')
+    ]);
+    await signOut(auth);
     setCurrentPage('dashboard');
-    setMobileMenuOpen(false); // Cerrar menú móvil al logout
+    setMobileMenuOpen(false);
   };
 
   const handlePageChange = (page: string) => {

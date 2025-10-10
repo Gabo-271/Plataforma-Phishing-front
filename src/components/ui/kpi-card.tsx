@@ -1,3 +1,4 @@
+import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './card';
 import { Progress } from './progress';
 import { Badge } from './badge';
