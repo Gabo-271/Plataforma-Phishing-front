@@ -22,17 +22,18 @@ import { getStorage, connectStorageEmulator } from 'firebase/storage';
 
 // Configuración de Firebase - REEMPLAZAR CON VALORES REALES
 const firebaseConfig = {
-  apiKey: "tu-api-key-aqui",
-  authDomain: "utem-ciberseguridad.firebaseapp.com",
-  projectId: "utem-ciberseguridad",
-  storageBucket: "utem-ciberseguridad.appspot.com",
-  messagingSenderId: "123456789",
-  appId: "1:123456789:web:abcdef123456",
-  measurementId: "G-XXXXXXXXXX"
+  apiKey: "AIzaSyB1pCHfKNCSFFnaYQA-tMY9H0rWQwOkg9s",
+  authDomain: "phish-utem.firebaseapp.com",
+  projectId: "phish-utem",
+  storageBucket: "phish-utem.firebasestorage.app",
+  messagingSenderId: "413671359553",
+  appId: "1:413671359553:web:d80f5a6e18d367c41a32c0",
+  measurementId: "G-QWWEFYRVGN"
 };
 
 // Inicializar Firebase
 const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
 
 // Inicializar servicios
 export const auth = getAuth(app);
